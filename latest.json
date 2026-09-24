@@ -1,7 +1,7 @@
 {
-  "version": "0.3.10",
-  "sha256": "1877dcd0835a428be4a4e11b60eff1814c438f969c4edf9ad7dda0fa462bcd7e",
+  "version": "0.3.11",
+  "sha256": "4e788c8d37d4384ec196c17f384931c7e3ef5be67b30cd39de0e156ee129f118",
   "parts": [
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.10/part-001.b64"
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.11/part-001.b64"
   ]
 }
