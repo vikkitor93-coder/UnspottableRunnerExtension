@@ -1,17 +1,18 @@
 {
-  "version": "0.3.21",
-  "sha256": "94e0155ef25d7fa183963a9299078f8b31fa75d9f4dd49fac473e8f6fff706d2",
+  "version": "0.3.22",
+  "sha256": "70d686bffe9f29e842bf113d7373760f2e4058236c9f974bc6ce0265671e5131",
   "parts": [
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-001.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-002.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-003.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-004.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-005.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-006.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-007.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-008.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-009.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-010.b64",
-    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.21/part-011.b64"
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-001.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-002.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-003.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-004.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-005.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-006.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-007.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-008.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-009.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-010.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-011.b64",
+    "https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/part-012.b64"
   ]
 }
