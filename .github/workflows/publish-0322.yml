@@ -31,8 +31,20 @@ jobs:
           work = Path('work')
           shutil.rmtree(work, ignore_errors=True)
           work.mkdir()
+          bad_entries = []
           with zipfile.ZipFile(old_zip) as z:
-              z.extractall(work)
+              for info in z.infolist():
+                  target = work / info.filename
+                  if info.is_dir():
+                      target.mkdir(parents=True, exist_ok=True)
+                      continue
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  try:
+                      target.write_bytes(z.read(info))
+                  except zipfile.BadZipFile:
+                      bad_entries.append(info.filename)
+          print('BAD_CRC_ENTRIES=' + json.dumps(bad_entries))
+          assert not bad_entries, 'Corrupt 0.3.21 entries: ' + ', '.join(bad_entries)
           roots = [p for p in work.iterdir() if p.is_dir()]
           assert len(roots) == 1
           old_root = roots[0]
