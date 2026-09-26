@@ -1,0 +1,109 @@
+name: Publish QA Suite 0.3.22
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/publish-0322.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build patched 0.3.22 runtime from verified 0.3.21 payload
+        shell: python
+        run: |
+          import base64, hashlib, json, re, shutil, zipfile
+          from pathlib import Path
+
+          repo = Path('.')
+          prev = repo / 'packages' / '0.3.21'
+          parts = [prev / f'part-{i:03d}.b64' for i in range(1, 12)]
+          payload = ''.join(p.read_text().strip() for p in parts)
+          old_zip = Path('old.zip')
+          old_zip.write_bytes(base64.b64decode(payload, validate=True))
+          assert hashlib.sha256(old_zip.read_bytes()).hexdigest() == '94e0155ef25d7fa183963a9299078f8b31fa75d9f4dd49fac473e8f6fff706d2'
+
+          work = Path('work')
+          shutil.rmtree(work, ignore_errors=True)
+          work.mkdir()
+          with zipfile.ZipFile(old_zip) as z:
+              z.extractall(work)
+          roots = [p for p in work.iterdir() if p.is_dir()]
+          assert len(roots) == 1
+          old_root = roots[0]
+          new_root = work / 'Unspottable-QA-Suite-v0.3.22'
+          old_root.rename(new_root)
+
+          apply = new_root / 'tools' / 'Apply-SelfUpdate.ps1'
+          s = apply.read_text()
+          old = "    $home = Join-Path $qaState $name\n    $stateFile = Join-Path $home 'runner-state.json'\n    $indexFile = Join-Path $home 'bridge\\index.json'"
+          new = "    $runnerStateRoot = Join-Path $qaState $name\n    $stateFile = Join-Path $runnerStateRoot 'runner-state.json'\n    $indexFile = Join-Path $runnerStateRoot 'bridge\\index.json'"
+          assert old in s
+          s = s.replace(old, new)
+          assert not re.search(r'(?im)^\s*\$home\s*=', s)
+          apply.write_text(s)
+
+          (new_root / 'VERSION.txt').write_text('0.3.22\n')
+          replacements = {
+              new_root / 'runner' / 'src' / 'constants.js': [('0.3.21','0.3.22')],
+              new_root / 'bridge' / 'extension' / 'core.js': [('0.3.21','0.3.22')],
+              new_root / 'bridge' / 'extension' / 'content.js': [('uqa-suite-0.3.21','uqa-suite-0.3.22')],
+              new_root / 'bridge' / 'tools' / 'mock-runner.mjs': [('0.3.21','0.3.22')],
+          }
+          for p, reps in replacements.items():
+              if not p.exists():
+                  continue
+              t = p.read_text()
+              for a,b in reps: t=t.replace(a,b)
+              p.write_text(t)
+
+          manifest = new_root / 'bridge' / 'extension' / 'manifest.json'
+          data = json.loads(manifest.read_text())
+          data['version'] = '0.3.18'
+          manifest.write_text(json.dumps(data, indent=2) + '\n')
+          pkg = new_root / 'bridge' / 'package.json'
+          if pkg.exists():
+              data = json.loads(pkg.read_text())
+              data['version'] = '0.3.18'
+              pkg.write_text(json.dumps(data, indent=2) + '\n')
+
+          assert '0.3.22' in (new_root/'runner/src/constants.js').read_text()
+          assert 'uqa-suite-0.3.22' in (new_root/'bridge/extension/core.js').read_text()
+          assert '$runnerStateRoot = Join-Path $qaState $name' in apply.read_text()
+
+          out = Path('qa-0.3.22.zip')
+          with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
+              z.writestr(new_root.name + '/', b'')
+              for p in sorted(new_root.rglob('*')):
+                  if p.is_file():
+                      z.write(p, f'{new_root.name}/{p.relative_to(new_root).as_posix()}')
+          raw = out.read_bytes()
+          sha = hashlib.sha256(raw).hexdigest()
+          b64 = base64.b64encode(raw).decode('ascii')
+          chunks = [b64[i:i+12000] for i in range(0, len(b64), 12000)]
+          dest = repo/'packages'/'0.3.22'
+          shutil.rmtree(dest, ignore_errors=True)
+          dest.mkdir(parents=True)
+          urls=[]
+          for i,chunk in enumerate(chunks,1):
+              name=f'part-{i:03d}.b64'
+              (dest/name).write_text(chunk)
+              urls.append(f'https://raw.githubusercontent.com/vikkitor93-coder/UnspottableRunnerExtension/main/packages/0.3.22/{name}')
+          rebuilt=base64.b64decode(''.join((dest/f'part-{i:03d}.b64').read_text() for i in range(1,len(chunks)+1)), validate=True)
+          assert rebuilt == raw
+          latest={'version':'0.3.22','sha256':sha,'parts':urls}
+          (repo/'latest.json').write_text(json.dumps(latest, indent=2)+'\n')
+          print(json.dumps({'sha256':sha,'bytes':len(raw),'parts':len(chunks)},indent=2))
+
+      - name: Commit atomic release channel update
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add packages/0.3.22 latest.json
+          git commit -m "Publish QA Suite 0.3.22 updater fix"
+          git push
